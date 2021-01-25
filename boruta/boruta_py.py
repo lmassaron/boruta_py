@@ -278,7 +278,11 @@ class BorutaPy(BaseEstimator, TransformerMixin):
         if not isinstance(y, np.ndarray):
             y = self._validate_pandas_input(y)
 
-        self.random_state = check_random_state(self.random_state)
+        if self._is_lightgbm:
+            # reproducibility of Boruta results with lightgbm
+            np.random.seed(self.random_state)
+        else:
+            self.random_state = check_random_state(self.random_state)
         # setup variables for Boruta
         n_sample, n_feat = X.shape
         _iter = 1
